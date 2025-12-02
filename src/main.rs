@@ -1,4 +1,5 @@
 mod day_01;
+mod day_02;
 mod utils;
 
 use std::env;
@@ -30,6 +31,7 @@ fn main() {
 
     match day {
         "day_01" => day_01::main(example),
+        "day_02" => day_02::main(example),
         _ => eprintln!("Unknown day: {}", args[1]),
     }
 }
