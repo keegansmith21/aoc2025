@@ -13,38 +13,51 @@ pub fn main(example: bool) {
     println!("Day {} - Part 2: {}", day, p2);
 }
 
-fn solve_part1(input: &str) -> i32 {
-    let lines: Vec<Vec<i32>> = input
+fn solve_part1(input: &str) -> i64 {
+    get_lines(input).iter().map(|l| line_joltage(&l, 2)).sum()
+}
+
+fn solve_part2(input: &str) -> i64 {
+    get_lines(input).iter().map(|l| line_joltage(&l, 12)).sum()
+}
+
+fn get_lines(input: &str) -> Vec<Vec<i64>> {
+    input
         .lines()
         .map(|l| l.chars())
         .map(|n| {
             n.map(|x| {
                 x.to_digit(10)
-                    .map(|d| d as i32)
+                    .map(|d| d as i64)
                     .unwrap_or_else(|| panic!("Could not parse to int: {}", x))
             })
             .collect()
         })
-        .collect();
-    lines.iter().map(|l| line_joltage(&l)).sum()
+        .collect()
 }
 
-fn solve_part2(_input: &str) -> i64 {
-    0
-}
+fn line_joltage(line: &Vec<i64>, n: usize) -> i64 {
+    // n is the number of numbers to use in the joltage calc
+    let len = line.len();
+    let mut js: Vec<i64> = Vec::new();
+    let mut start = 0;
 
-fn line_joltage(line: &Vec<i32>) -> i32 {
-    let n1 = first_largest(line[..line.len()-1]);
-    let n2 = first_largest(line[n1.1..]
+    // Get the first largest element. Use a sliding window to determine the values to look at.
+    // The end of the window is easy - The number of values remaining - 1.
+    // The start is the location of the previous largest element + 1.
+    for i in 1..n + 1 {
+        let end: usize = (len - n + i) as usize;
+        let max: i64 = *line[start..end].iter().max().unwrap_or_else(|| panic!(""));
 
-    0
-}
-
-fn first_largest(array: &Vec<i32>) -> (i32, i32) {
-    let max: i32 = *array.iter().max().unwrap_or_else(|| panic!(""));
-    let idx: i32 = array
-        .into_iter()
-        .position(|&n| n == max)
-        .unwrap_or_else(|| panic!("")) as i32;
-    (max, idx)
+        start += line[start..end]
+            .iter()
+            .position(|&x| x == max)
+            .unwrap_or_else(|| panic!(""))
+            + 1;
+        js.push(max)
+    }
+    js.iter()
+        .enumerate()
+        .map(|(i, j)| j * 10_i64.pow((n - i - 1) as u32))
+        .sum()
 }
