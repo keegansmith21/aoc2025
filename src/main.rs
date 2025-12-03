@@ -1,12 +1,13 @@
 mod day_01;
 mod day_02;
+mod day_03;
 mod utils;
 
 use std::env;
 
 fn usage() {
-    eprintln!("Usage: cargo run -- <day> [--example]");
-    eprintln!("Example: cargo run -- day_01 --example");
+    eprintln!("Usage: cargo run -- <N> [--example]");
+    eprintln!("Example: cargo run -- 1 --example");
 }
 
 fn main() {
@@ -30,8 +31,9 @@ fn main() {
     };
 
     match day {
-        "day_01" => day_01::main(example),
-        "day_02" => day_02::main(example),
+        "1" => day_01::main(example),
+        "2" => day_02::main(example),
+        "3" => day_03::main(example),
         _ => eprintln!("Unknown day: {}", args[1]),
     }
 }
