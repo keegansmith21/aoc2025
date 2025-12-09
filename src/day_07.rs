@@ -1,4 +1,5 @@
 use crate::utils;
+use std::collections::HashMap;
 
 pub fn main(example: bool) {
     let day: u8 = 7;
@@ -17,8 +18,6 @@ fn solve_part1(input: &str) -> i64 {
     let mut map: Vec<Vec<char>>;
     let _start: usize;
     (map, _start) = parse_input(input);
-    // println!("MAP: {:?}", map);
-    // println!("Start: {}", start);
     let mut splits: i64 = 0;
     for i in 1..map.len() {
         // Location of beams above us
@@ -39,8 +38,14 @@ fn solve_part1(input: &str) -> i64 {
     splits
 }
 
-fn solve_part2(_input: &str) -> i64 {
-    0
+fn solve_part2(input: &str) -> i64 {
+    // Recursive algorithm to find all possibilities
+    let map: Vec<Vec<char>>;
+    let start: usize;
+    (map, start) = parse_input(input);
+    let timelines: i64 = get_timelines(&map, start);
+
+    timelines
 }
 
 fn parse_input(input: &str) -> (Vec<Vec<char>>, usize) {
@@ -71,4 +76,34 @@ fn cascade(beams: &Vec<usize>, new_row: &mut Vec<char>) -> i64 {
         }
     }
     splits
+}
+
+fn get_timelines(map: &Vec<Vec<char>>, start: usize) -> i64 {
+    // Memoized recursive algorithm
+    let mut hashmap: HashMap<(usize, usize), i64> = HashMap::new();
+    fn timelines(
+        map: &Vec<Vec<char>>,
+        row: usize,
+        beam: usize, // beam is the location of the beam from above
+        hashmap: &mut HashMap<(usize, usize), i64>,
+    ) -> i64 {
+        // memoized case
+        if let Some(v) = hashmap.get(&(row, beam)) {
+            return *v;
+        }
+        // base case - hit the bottom
+        if row == map.len() - 1 {
+            return 1;
+        }
+        // split
+        if map[row][beam] == '^' {
+            let left: i64 = timelines(map, row + 1, beam - 1, hashmap);
+            let right: i64 = timelines(map, row + 1, beam + 1, hashmap);
+            hashmap.insert((row, beam), left + right);
+            return left + right;
+        }
+        // empty space
+        timelines(map, row + 1, beam, hashmap)
+    }
+    timelines(map, 1, start, &mut hashmap)
 }
