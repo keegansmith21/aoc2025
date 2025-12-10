@@ -5,6 +5,7 @@ mod day_04;
 mod day_05;
 mod day_06;
 mod day_07;
+mod day_08;
 mod utils;
 
 use std::env;
@@ -42,6 +43,7 @@ fn main() {
         "5" => day_05::main(example),
         "6" => day_06::main(example),
         "7" => day_07::main(example),
+        "8" => day_08::main(example),
         _ => eprintln!("Unknown day: {}", args[1]),
     }
 }
